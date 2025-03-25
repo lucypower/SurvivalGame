@@ -33,6 +33,18 @@ private :
 
 public :
 
+	FCoreStats() // default constructor
+	{
+	
+	};
+
+	FCoreStats(const float& current, const float& max, const float& tick) // override constructor
+	{
+		Current = current;
+		Max = max;
+		PerSecondTick = tick;
+	};
+	
 	void TickStat(const float& DeltaTime)
 	{
 		Current = FMath::Clamp(Current + (PerSecondTick * DeltaTime), 0, Max);
@@ -47,6 +59,11 @@ public :
 	{
 		return Current / Max;
 	}
+
+	void AdjustTick(const float& NewTick)
+	{
+		PerSecondTick = NewTick;
+	}
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -57,16 +74,18 @@ class SURVIVALGAME_API UStatlineComponent : public UActorComponent
 private :
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FCoreStats Health;
+	FCoreStats Health; // default values of FCoreStat values
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FCoreStats Stamina;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FCoreStats Hunger;
+	FCoreStats Hunger = FCoreStats(100, 100, -0.125); // override default values of FCoreStat values
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FCoreStats Thirst;
+	FCoreStats Thirst = FCoreStats(100, 100, -0.25);
+
+	void TickStats(const float& DeltaTime);
 	
 public:	
 	// Sets default values for this component's properties
@@ -81,5 +100,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
-	float GetStatPercentile(const ECoreStats& Stat) const;
+	float GetStatPercentile(const ECoreStats Stat) const;
+	
+	
 };

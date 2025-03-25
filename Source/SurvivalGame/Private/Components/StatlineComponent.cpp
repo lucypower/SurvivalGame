@@ -29,10 +29,21 @@ void UStatlineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (TickType != ELevelTick::LEVELTICK_PauseTick)
+	{
+		TickStats(DeltaTime);
+	}
 }
 
-float UStatlineComponent::GetStatPercentile(const ECoreStats& Stat) const
+void UStatlineComponent::TickStats(const float& DeltaTime)
+{
+	Health.TickStat((DeltaTime)); // health/stamina etc are of type FCoreStats struct
+	Stamina.TickStat((DeltaTime)); // .TickStat is function within struct 
+	Hunger.TickStat((DeltaTime));
+	Thirst.TickStat((DeltaTime));
+}
+
+float UStatlineComponent::GetStatPercentile(const ECoreStats Stat) const
 {
 	switch (Stat)
 	{
