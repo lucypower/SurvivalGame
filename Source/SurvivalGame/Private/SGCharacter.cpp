@@ -2,6 +2,7 @@
 
 
 #include "SGCharacter.h"
+#include "Components/StatlineComponent.h"
 
 // Sets default values
 ASGCharacter::ASGCharacter()
@@ -9,6 +10,7 @@ ASGCharacter::ASGCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
 }
 
 // Called when the game starts or when spawned
