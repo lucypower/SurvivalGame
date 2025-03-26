@@ -53,6 +53,12 @@ protected:
 
 	// Called for look input
 	void Look(const FInputActionValue& Value);
+
+	void PlayerJump();
+	
+	bool CanJump() const;
+
+	void HasJumped();
 	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
