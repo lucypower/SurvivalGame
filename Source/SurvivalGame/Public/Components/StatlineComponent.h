@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -79,6 +77,8 @@ class SURVIVALGAME_API UStatlineComponent : public UActorComponent
 private :
 
 	class UCharacterMovementComponent* OwningCharMovementComp;
+
+#pragma region Stats
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FCoreStats Health; // default values of FCoreStat values
@@ -93,9 +93,6 @@ private :
 	FCoreStats Thirst = FCoreStats(100, 100, -0.25);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	bool bIsSprinting = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float SprintCostMultiplier = 2;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true")) // EditDefaultsOnly means I can edit the values in the class defaults panel in a blueprint
@@ -104,13 +101,40 @@ private :
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float SprintSpeed = 450;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float SneakSpeed = 75;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float JumpCost = 10;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true")) // want to edit it per bp but not at runtime
+	float StaminaExhDuration = 5;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true")) // don't want to edit this but do want to see it
+	float CurrentStaminaExh = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float StarvationDamage = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float DehydrationDamage = 1;
+	
+#pragma endregion
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bIsSprinting = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool bIsSneaking = false;
+	
 	void TickStats(const float& DeltaTime);
 
 	void TickStamina(const float& DeltaTime);
 
+	void TickHunger(const float& DeltaTime);
+
+	void TickThirst(const float& DeltaTime);
+	
 	bool IsValidSprinting();
 	
 protected:
@@ -135,9 +159,13 @@ public:
 	UFUNCTION(BlueprintCallable) // tell statline comp that it is sprinting or not
 	void SetSprinting(const bool& IsSprinting);
 
+	UFUNCTION(BlueprintCallable)
+	void SetSneaking(const bool& IsSneaking);
+
 	UFUNCTION(BlueprintCallable) // can we jump? useful for AI too
 	bool CanJump();
 
 	UFUNCTION(BlueprintCallable) // have we jumped? useful for AI too
 	void HasJumped();
 };
+
