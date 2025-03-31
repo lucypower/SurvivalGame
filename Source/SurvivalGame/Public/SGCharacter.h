@@ -22,6 +22,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	bool CanJump() const;
+	
+	void HasJumped();
+
+	bool CanSprint() const;
+
+	void SetSprinting(const bool& IsSprinting);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

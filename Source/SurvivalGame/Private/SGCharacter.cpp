@@ -11,6 +11,7 @@ ASGCharacter::ASGCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Statline = CreateDefaultSubobject<UStatlineComponent>(TEXT("Statline"));
+	Statline->SetMovementCompRef(GetCharacterMovement()); // sets character movement component reference for the statline component
 }
 
 // Called when the game starts or when spawned
@@ -18,6 +19,28 @@ void ASGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+bool ASGCharacter::CanJump() const
+{
+	return Statline->CanJump();
+}
+
+void ASGCharacter::HasJumped()
+{
+	Statline->HasJumped();
+
+	ACharacter::Jump();
+}
+
+bool ASGCharacter::CanSprint() const
+{
+	return Statline->CanSprint();
+}
+
+void ASGCharacter::SetSprinting(const bool& IsSprinting)
+{
+	Statline->SetSprinting(IsSprinting);
 }
 
 // Called every frame
