@@ -33,6 +33,16 @@ void ASGCharacter::HasJumped()
 	ACharacter::Jump();
 }
 
+bool ASGCharacter::CanSprint() const
+{
+	return Statline->CanSprint();
+}
+
+void ASGCharacter::SetSprinting(const bool& IsSprinting)
+{
+	Statline->SetSprinting(IsSprinting);
+}
+
 // Called every frame
 void ASGCharacter::Tick(float DeltaTime)
 {

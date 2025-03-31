@@ -67,9 +67,13 @@ void ASGPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 		// Move
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASGPlayerCharacter::Move);
+		// Sprint
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASGPlayerCharacter::SprintOn);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASGPlayerCharacter::SprintOff);
 
 		// Look
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASGPlayerCharacter::Look);
+
 	}
 }
 
@@ -109,18 +113,18 @@ void ASGPlayerCharacter::Look(const FInputActionValue& Value)
 
 void ASGPlayerCharacter::PlayerJump() // function that will actually be called when the player jumps
 {
-	if (CanJump())
+	if (ASGCharacter::CanJump())
 	{
-		HasJumped();
+		ASGCharacter::HasJumped();
 	}
 }
 
-bool ASGPlayerCharacter::CanJump() const
+void ASGPlayerCharacter::SprintOn()
 {
-	return ASGCharacter::CanJump();
+	SetSprinting(true);
 }
 
-void ASGPlayerCharacter::HasJumped()
+void ASGPlayerCharacter::SprintOff()
 {
-	ASGCharacter::HasJumped();
+	SetSprinting(false);
 }

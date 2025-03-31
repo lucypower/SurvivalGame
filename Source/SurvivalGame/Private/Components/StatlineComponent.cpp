@@ -18,8 +18,7 @@ void UStatlineComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	OwningCharMovementComp->MaxWalkSpeed = WalkSpeed;
 }
 
 void UStatlineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -46,6 +45,11 @@ void UStatlineComponent::TickStamina(const float& DeltaTime)
 	{
 		Stamina.TickStat(0 - (DeltaTime * SprintCostMultiplier));
 
+		if (Stamina.GetCurrent() <= 0.0)
+		{
+			SetSprinting(false);
+		}
+		
 		return ;
 	}
 	Stamina.TickStat(DeltaTime);
@@ -99,7 +103,7 @@ void UStatlineComponent::SetSprinting(const bool& IsSprinting)
 
 bool UStatlineComponent::CanJump()
 {
-	return Stamina.GetCurrent() >= JumpCost; // do we have enough stamina to pay jump cost
+	return Stamina.GetCurrent() >= JumpCost && !OwningCharMovementComp->IsFalling(); // do we have enough stamina to pay jump cost
 }
 
 void UStatlineComponent::HasJumped()

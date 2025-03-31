@@ -26,6 +26,10 @@ protected:
 	
 	void HasJumped();
 
+	bool CanSprint() const;
+
+	void SetSprinting(const bool& IsSprinting);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
