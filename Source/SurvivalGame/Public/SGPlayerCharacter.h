@@ -51,6 +51,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SneakAction;
+
 #pragma endregion Input
 	
 protected:
@@ -62,9 +65,12 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void PlayerJump();
-
+	
 	void SprintOn();
 	void SprintOff();
+
+	void SneakOn();
+	void SneakOff();
 	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

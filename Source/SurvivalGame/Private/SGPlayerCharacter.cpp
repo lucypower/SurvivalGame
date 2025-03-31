@@ -71,6 +71,10 @@ void ASGPlayerCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASGPlayerCharacter::SprintOn);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASGPlayerCharacter::SprintOff);
 
+		// Sneak
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Started, this, &ASGPlayerCharacter::SneakOn);
+		EnhancedInputComponent->BindAction(SneakAction, ETriggerEvent::Completed, this, &ASGPlayerCharacter::SneakOff);
+		
 		// Look
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASGPlayerCharacter::Look);
 
@@ -127,4 +131,14 @@ void ASGPlayerCharacter::SprintOn()
 void ASGPlayerCharacter::SprintOff()
 {
 	SetSprinting(false);
+}
+
+void ASGPlayerCharacter::SneakOn()
+{
+	SetSneaking(true);
+}
+
+void ASGPlayerCharacter::SneakOff()
+{
+	SetSneaking(false);
 }

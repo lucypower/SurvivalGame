@@ -43,6 +43,11 @@ void ASGCharacter::SetSprinting(const bool& IsSprinting)
 	Statline->SetSprinting(IsSprinting);
 }
 
+void ASGCharacter::SetSneaking(const bool& IsSneaking)
+{
+	Statline->SetSneaking(IsSneaking);
+}
+
 // Called every frame
 void ASGCharacter::Tick(float DeltaTime)
 {

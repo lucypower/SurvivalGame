@@ -1,10 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Components/StatlineComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-// Sets default values for this component's properties
 UStatlineComponent::UStatlineComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -33,14 +29,25 @@ void UStatlineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UStatlineComponent::TickStats(const float& DeltaTime)
 {
-	Health.TickStat((DeltaTime)); // health/stamina etc are of type FCoreStats struct || .TickStat is function within struct 
-	TickStamina((DeltaTime)); // 
-	Hunger.TickStat((DeltaTime));
-	Thirst.TickStat((DeltaTime));
+	TickStamina((DeltaTime));
+	TickHunger(DeltaTime);
+	TickThirst(DeltaTime);
+	
+	if (!(Hunger.GetCurrent() <= 0.0) && !(Thirst.GetCurrent() <= 0.0)) // if neither hunger or thirst < 0 ; tick health regen
+	{
+		Health.TickStat((DeltaTime)); // health/stamina etc are of type FCoreStats struct || .TickStat is function within struct 
+	}
 }
 
 void UStatlineComponent::TickStamina(const float& DeltaTime)
-{
+{	
+	if (CurrentStaminaExh > 0.0) // TODO: can still sprint while in exhaustion (can sprint when no stamina)
+	{
+		CurrentStaminaExh -= DeltaTime;
+
+		return;
+	}
+	
 	if (bIsSprinting && IsValidSprinting())
 	{
 		Stamina.TickStat(0 - (DeltaTime * SprintCostMultiplier));
@@ -48,16 +55,35 @@ void UStatlineComponent::TickStamina(const float& DeltaTime)
 		if (Stamina.GetCurrent() <= 0.0)
 		{
 			SetSprinting(false);
+			CurrentStaminaExh = StaminaExhDuration;
 		}
 		
 		return ;
 	}
+	
 	Stamina.TickStat(DeltaTime);
 }
 
-bool UStatlineComponent::IsValidSprinting()
+void UStatlineComponent::TickHunger(const float& DeltaTime)
 {
-	return OwningCharMovementComp->Velocity.Length() > WalkSpeed && !OwningCharMovementComp->IsFalling(); // are we moving faster than walk speed (aka running) but also not falling
+	if (Hunger.GetCurrent() <= 0.0)
+	{
+		Health.Adjust(0 - (StarvationDamage * DeltaTime));
+		return;
+	}
+
+	Hunger.TickStat(DeltaTime);
+}
+
+void UStatlineComponent::TickThirst(const float& DeltaTime)
+{
+	if (Thirst.GetCurrent() <= 0.0)
+	{
+		Health.Adjust(0 - (DehydrationDamage * DeltaTime));
+		return;
+	}
+
+	Thirst.TickStat(DeltaTime);
 }
 
 void UStatlineComponent::SetMovementCompRef(UCharacterMovementComponent* MovementCompRef)
@@ -98,7 +124,34 @@ void UStatlineComponent::SetSprinting(const bool& IsSprinting)
 {
 	bIsSprinting = IsSprinting;
 
+	if (bIsSneaking && !bIsSprinting)
+	{
+		return;
+	}
+	
+	bIsSneaking = false;
+
 	OwningCharMovementComp->MaxWalkSpeed = bIsSprinting ? SprintSpeed : WalkSpeed; // if sprinting is true, set max walk to sprint, otherwise set max walk to walk
+}
+
+void UStatlineComponent::SetSneaking(const bool& IsSneaking)
+{
+	bIsSneaking = IsSneaking;
+
+	if (bIsSprinting && !bIsSneaking)
+	{
+		return;
+	}
+	
+	bIsSprinting = false;
+	
+	OwningCharMovementComp->MaxWalkSpeed = bIsSneaking ? SneakSpeed : WalkSpeed;
+}
+
+
+bool UStatlineComponent::IsValidSprinting()
+{
+	return OwningCharMovementComp->Velocity.Length() > WalkSpeed && !OwningCharMovementComp->IsFalling(); // are we moving faster than walk speed (aka running) but also not falling
 }
 
 bool UStatlineComponent::CanJump()
